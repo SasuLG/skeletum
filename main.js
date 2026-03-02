@@ -232,7 +232,7 @@ light.position.set(5, 10, 7.5);
 scene.add(light);
 
 const loader = new GLTFLoader();
-const gltf = await loader.loadAsync('/skeleton.glb');
+const gltf = await loader.loadAsync(import.meta.env.BASE_URL + 'skeleton.glb');
 const geometry = gltf.scene.children[0].geometry;
 // const texture =  new THREE.TextureLoader().load('skeleton.png');
 const material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
