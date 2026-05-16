@@ -32,6 +32,55 @@ setInterval(() => {
 }, 1000);
 
 //#region pas cool
+
+function letsgo(){
+  ended = true;
+  gltf.scene.children.forEach(c => {
+    if(c.geometry){
+      scene.add(new THREE.Mesh(c.geometry, material));
+    }
+    else{
+      c.children.forEach(child => {
+        if(child.geometry){
+          scene.add(new THREE.Mesh(child.geometry, material));
+        }
+      });
+    }
+  });
+  bones.forEach(bone => {
+    bone.classList.add("found");
+    bone.innerHTML = "";
+    totalOsFind += parseInt(bone.dataset.count);
+    totalOsElement.textContent =totalOsFind+"/206";
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = bone.dataset.name;
+    const countSpan = document.createElement("span");
+    if (bone.dataset.count > 1) {
+      countSpan.textContent = `x${bone.dataset.count}`;
+    }
+    bone.appendChild(nameSpan);
+    bone.appendChild(countSpan);
+    });
+  showVictoryScreen();  
+}
+
+let tapCount = 0;
+let tapTimeout;
+timerElement.addEventListener("touchstart", () => {
+  tapCount++;
+  clearTimeout(tapTimeout);
+
+  tapTimeout = setTimeout(() => {
+    tapCount = 0;
+  }, 1000);
+
+  if (tapCount >= 5) {
+    letsgo()
+    tapCount = 0;
+  }
+});
+
+
 let j = 0;
 setInterval(() => {
   j = 0;
@@ -41,34 +90,7 @@ window.addEventListener("keydown", (e) => {
   if(e.key === "l"){
     j++;
     if(j===6){
-      ended = true;
-      gltf.scene.children.forEach(c => {
-        if(c.geometry){
-          scene.add(new THREE.Mesh(c.geometry, material));
-        }
-        else{
-          c.children.forEach(child => {
-            if(child.geometry){
-              scene.add(new THREE.Mesh(child.geometry, material));
-            }
-          });
-        }
-      });
-      bones.forEach(bone => {
-        bone.classList.add("found");
-        bone.innerHTML = "";
-        totalOsFind += parseInt(bone.dataset.count);
-        totalOsElement.textContent =totalOsFind+"/206";
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = bone.dataset.name;
-        const countSpan = document.createElement("span");
-        if (bone.dataset.count > 1) {
-          countSpan.textContent = `x${bone.dataset.count}`;
-        }
-        bone.appendChild(nameSpan);
-        bone.appendChild(countSpan);
-        });
-      showVictoryScreen();
+      letsgo()
     }
   }
 });
@@ -222,6 +244,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(-50, 50, 100);
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
